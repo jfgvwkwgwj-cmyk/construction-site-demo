@@ -7,6 +7,10 @@ import config from './config';
 import { initSmoothScroll, scrollToTarget, getLenis } from './lib/scroll';
 import Icon from './components/Icon';
 import Blueprint from './components/Blueprint';
+import BuildScene from './components/BuildScene';
+import Estimator from './components/Estimator';
+import Compare from './components/Compare';
+import Crosshair from './bits/Crosshair';
 
 import SplitText from './bits/SplitText';
 import CountUp from './bits/CountUp';
@@ -28,6 +32,7 @@ const years = new Date().getFullYear() - company.founded;
 const NAV = [
   ['Services', '#services'],
   ['Projects', '#projects'],
+  ['Estimate', '#estimate'],
   ['Process', '#process'],
   ['Reviews', '#reviews'],
   ['Contact', '#quote']
@@ -48,18 +53,24 @@ const go = e => {
 };
 
 /* ───────────────────────── Preloader ───────────────────────── */
+const PRE_PHRASES = ['Surveying site', 'Pulling permits', 'Pouring foundation', 'Raising steel', 'Ready to build'];
 function Preloader({ onDone }) {
   const ref = useRef(null);
   useGSAP(
     () => {
       const counter = { v: 0 };
       const num = ref.current.querySelector('.pre-num');
+      const msg = ref.current.querySelector('.pre-msg');
       const tl = gsap.timeline({ onComplete: onDone });
       tl.to(counter, {
         v: 100,
         duration: 1.6,
         ease: 'power3.inOut',
-        onUpdate: () => (num.textContent = String(Math.round(counter.v)).padStart(3, '0'))
+        onUpdate: () => {
+          num.textContent = String(Math.round(counter.v)).padStart(3, '0');
+          const phrase = PRE_PHRASES[Math.min(PRE_PHRASES.length - 1, Math.floor((counter.v / 100) * PRE_PHRASES.length))];
+          if (msg.textContent !== phrase) msg.textContent = phrase;
+        }
       })
         .to('.pre-bar i', { scaleX: 1, duration: 1.6, ease: 'power3.inOut' }, 0)
         .to('.pre-inner', { y: -40, opacity: 0, duration: 0.5, ease: 'power2.in' })
@@ -75,7 +86,7 @@ function Preloader({ onDone }) {
           <i />
         </div>
         <div className="pre-meta">
-          <span>Est. {company.founded}</span>
+          <span className="pre-msg">{PRE_PHRASES[0]}</span>
           <span className="pre-num">000</span>
         </div>
       </div>
@@ -157,121 +168,6 @@ function Nav() {
   );
 }
 
-/* ───────────────────────── Hero ───────────────────────── */
-function Hero({ ready }) {
-  const ref = useRef(null);
-
-  useGSAP(
-    () => {
-      if (!ready) return;
-      gsap.from('.hero-fade', { y: 30, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.1, delay: 0.5 });
-      // parallax the drawing as the hero scrolls away
-      gsap.to('.hero-art', {
-        yPercent: 18,
-        ease: 'none',
-        scrollTrigger: { trigger: ref.current, start: 'top top', end: 'bottom top', scrub: true }
-      });
-    },
-    { scope: ref, dependencies: [ready] }
-  );
-
-  return (
-    <section className="hero" id="top" ref={ref}>
-      <div className="hero-bg">
-        {hero.image ? (
-          <img src={hero.image} alt="" className="hero-img" />
-        ) : (
-          <DotGrid dotSize={2} gap={26} baseColor="#2a2c30" activeColor={theme.accent} proximity={160} shockRadius={260} glow={0.4} />
-        )}
-        <div className="hero-vignette" />
-      </div>
-
-      <div className="container hero-grid">
-        <div className="hero-copy">
-          {ready && (
-            <>
-              <p className="eyebrow hero-fade">
-                <Icon name="shield" size={16} /> {hero.eyebrow}
-              </p>
-              <SplitText
-                text={hero.headline}
-                tag="h1"
-                className="hero-title"
-                splitType="words, chars"
-                textAlign="left"
-                delay={28}
-                duration={1.1}
-                mask
-                trigger="load"
-              />
-              <div className="hero-rotate hero-fade">
-                <span>Specialists in</span>
-                <RotatingText
-                  texts={hero.rotating}
-                  mainClassName="rot-pill"
-                  staggerDuration={0.02}
-                  staggerFrom="last"
-                  rotationInterval={2200}
-                  splitBy="characters"
-                />
-              </div>
-              <p className="hero-sub hero-fade">{hero.sub}</p>
-              <div className="hero-actions hero-fade">
-                <StarBorder
-                  as="a"
-                  href="#quote"
-                  onClick={go}
-                  color="#ffffff"
-                  duration={5}
-                  radius={999}
-                  backgroundColor={theme.accent}
-                  textColor="#111"
-                  className="btn-star"
-                >
-                  Get a free estimate <Icon name="arrow" size={18} />
-                </StarBorder>
-                <a href="#projects" onClick={go} className="btn btn-line">
-                  See our work
-                </a>
-              </div>
-            </>
-          )}
-        </div>
-        <div className="hero-art">{ready && <Blueprint type="house" autoplay duration={2.8} />}</div>
-      </div>
-
-      <div className="container hero-trust">
-        {[
-          ['shield', 'Licensed & insured'],
-          ['clock', `${years}+ years local`],
-          ['check', 'Written fixed pricing'],
-          ['pin', `Serving ${company.city}`]
-        ].map(([icon, label]) => (
-          <span key={label} className="trust-item">
-            <Icon name={icon} size={18} /> {label}
-          </span>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────────── Marquee ───────────────────────── */
-function Marquee() {
-  return (
-    <div className="marquee" aria-hidden="true">
-      <ScrollVelocity
-        texts={[config.services.map(s => s.title).join('  ✦  ') + '  ✦  ']}
-        velocity={40}
-        numCopies={4}
-        className="marquee-text"
-        skewWithVelocity={6}
-        outlineAlternate
-      />
-    </div>
-  );
-}
-
 /* ───────────────────────── Section header ───────────────────────── */
 function SectionHead({ index, label, title, children }) {
   return (
@@ -282,6 +178,248 @@ function SectionHead({ index, label, title, children }) {
       <SplitText text={title} tag="h2" className="h2" splitType="words" textAlign="left" delay={60} effect="rise" mask />
       {children && <p className="lead reveal">{children}</p>}
     </div>
+  );
+}
+
+/* ───────────────────────── Hero (3D build) ───────────────────────── */
+function Hero({ ready }) {
+  const ref = useRef(null);
+  const hudRef = useRef(null);
+  const progressRef = useRef(0);
+  const parts = useRef({ intro: 0, scroll: 0 });
+  const [mobile] = useState(() => window.matchMedia('(max-width: 700px)').matches);
+
+  const sync = () => {
+    const { intro, scroll } = parts.current;
+    progressRef.current = intro * 0.2 + scroll * 0.8;
+    ref.current?.classList.toggle('is-topped', progressRef.current > 0.97);
+  };
+
+  useGSAP(
+    () => {
+      ScrollTrigger.create({
+        trigger: ref.current,
+        start: 'top top',
+        end: () => `+=${window.innerHeight * (mobile ? 1.4 : 1.8)}`,
+        pin: '.hero-stage',
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: self => {
+          parts.current.scroll = self.progress;
+          sync();
+        }
+      });
+      gsap.to('.hero-copy', {
+        opacity: 0,
+        y: -40,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: ref.current,
+          start: () => `top+=${window.innerHeight * 0.9} top`,
+          end: () => `top+=${window.innerHeight * (mobile ? 1.3 : 1.5)} top`,
+          scrub: true,
+          invalidateOnRefresh: true
+        }
+      });
+      gsap.to('.scroll-cue', { opacity: 0, scrollTrigger: { trigger: ref.current, start: 'top+=40 top', end: 'top+=200 top', scrub: true } });
+    },
+    { scope: ref }
+  );
+
+  useGSAP(
+    () => {
+      if (!ready) return;
+      gsap.to(parts.current, { intro: 1, duration: 3, ease: 'power2.inOut', delay: 0.2, onUpdate: sync });
+      gsap.from('.hero-fade', { y: 30, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.1, delay: 0.5 });
+      gsap.from('.hud', { x: 40, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.9 });
+    },
+    { scope: ref, dependencies: [ready] }
+  );
+
+  return (
+    <section className="hero" id="top" ref={ref}>
+      <div className="hero-stage">
+        <BuildScene progressRef={progressRef} hudRef={hudRef} accent={theme.accent} bg={theme.bg} mobile={mobile} />
+        <div className="hero-shade" />
+
+        <div className="container hero-inner">
+          <div className="hero-copy">
+            {ready && (
+              <>
+                <p className="eyebrow hero-fade">
+                  <Icon name="shield" size={16} /> {hero.eyebrow}
+                </p>
+                <SplitText
+                  text={hero.headline}
+                  tag="h1"
+                  className="hero-title"
+                  splitType="words, chars"
+                  textAlign="left"
+                  delay={28}
+                  duration={1.1}
+                  mask
+                  trigger="load"
+                />
+                <div className="hero-rotate hero-fade">
+                  <span>Specialists in</span>
+                  <RotatingText
+                    texts={hero.rotating}
+                    mainClassName="rot-pill"
+                    staggerDuration={0.02}
+                    staggerFrom="last"
+                    rotationInterval={2200}
+                    splitBy="characters"
+                  />
+                </div>
+                <p className="hero-sub hero-fade">{hero.sub}</p>
+                <div className="hero-actions hero-fade">
+                  <StarBorder
+                    as="a"
+                    href="#estimate"
+                    onClick={go}
+                    color="#ffffff"
+                    duration={5}
+                    radius={999}
+                    backgroundColor={theme.accent}
+                    textColor="#111"
+                    className="btn-star"
+                  >
+                    Price my project <Icon name="arrow" size={18} />
+                  </StarBorder>
+                  <a href="#projects" onClick={go} className="btn btn-line">
+                    See our work
+                  </a>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <aside className="hud" ref={hudRef} aria-hidden="true">
+          <div className="hud-row hud-top">
+            <span>
+              <i className="hud-dot" /> Live build
+            </span>
+            <span>
+              <b data-hud="pct">000</b>%
+            </span>
+          </div>
+          <div className="hud-phase" data-hud="phase">
+            Surveying site
+          </div>
+          <div className="hud-bar">
+            <i data-hud="bar" />
+          </div>
+          <div className="hud-row">
+            <span>
+              Level <b data-hud="lvl">00</b>/09
+            </span>
+            <span>
+              EL <b data-hud="el">+000'</b>
+            </span>
+          </div>
+        </aside>
+
+        <div className="stamp" aria-hidden="true">
+          <span>Topped out</span>
+          <small>On schedule · On budget</small>
+        </div>
+
+        <div className="scroll-cue" aria-hidden="true">
+          <span>Scroll to build</span>
+          <i />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── Caution tape ───────────────────────── */
+function Tape() {
+  const words = config.services.map(s => s.title.toUpperCase());
+  return (
+    <div className="tapes" aria-hidden="true">
+      <div className="tape tape-a">
+        <ScrollVelocity texts={[words.join('  ◆  ') + '  ◆  ']} velocity={30} numCopies={4} className="tape-text" />
+      </div>
+      <div className="tape tape-b">
+        <ScrollVelocity
+          texts={[`HARD HAT AREA  ◆  ${company.license.toUpperCase()}  ◆  FULLY INSURED  ◆  BUILT IN ${company.city.toUpperCase()}  ◆  `]}
+          velocity={-24}
+          numCopies={4}
+          className="tape-text"
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Elevation gauge (desktop) ───────────────────────── */
+function Gauge() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    const mark = el.querySelector('.gauge-mark');
+    const val = el.querySelector('.gauge-val');
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? window.scrollY / max : 0;
+      mark.style.top = `${(1 - p) * 100}%`;
+      val.textContent = `+${String(Math.round(p * 240)).padStart(3, '0')}'`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <div className="gauge" ref={ref} aria-hidden="true">
+      <span className="gauge-cap">EL</span>
+      <div className="gauge-track">
+        <div className="gauge-mark">
+          <span className="gauge-val">+000'</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── Plan → Built ───────────────────────── */
+function PlanToBuilt() {
+  return (
+    <section className="section" id="plan">
+      <div className="container plan-grid">
+        <SectionHead index="03" label="Plan to keys" title="What we draw is what you get.">
+          Drag the slider. Every line on our plans ends up as something you can stand in, and nothing gets lost between paper and handover.
+        </SectionHead>
+        <div className="reveal">
+          <Compare />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── Estimate ───────────────────────── */
+function Estimate({ onQuote }) {
+  return (
+    <section className="section estimate" id="estimate">
+      <div className="estimate-bg" aria-hidden="true">
+        <DotGrid dotSize={2} gap={28} baseColor="#24262a" activeColor={theme.accent} proximity={140} shockRadius={240} glow={0.3} />
+      </div>
+      <div className="container">
+        <SectionHead index="05" label="Instant estimate" title="Know your number in ten seconds.">
+          No email required. Pick a project, drag the size, choose a finish. You get a real ballpark built from our recent local jobs.
+        </SectionHead>
+        <div className="reveal">
+          <Estimator onQuote={onQuote} />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -392,7 +530,7 @@ function Projects() {
     <section className="section projects" id="projects" ref={ref}>
       <div className="proj-pin">
         <div className="container proj-head">
-          <SectionHead index="03" label="Selected work" title="Built here. Still standing." />
+          <SectionHead index="04" label="Selected work" title="Built here. Still standing." />
           <div className="proj-progress" aria-hidden="true">
             <i />
           </div>
@@ -457,7 +595,7 @@ function Process() {
     <section className="section process" id="process" ref={ref}>
       <div className="container process-grid">
         <div className="process-sticky">
-          <SectionHead index="04" label="How it works" title="A process with no surprises.">
+          <SectionHead index="06" label="How it works" title="A process with no surprises.">
             You’ll know the price, the schedule and who’s in charge before a single shovel hits dirt.
           </SectionHead>
         </div>
@@ -485,7 +623,7 @@ function Reviews() {
   return (
     <section className="section" id="reviews">
       <div className="container">
-        <SectionHead index="05" label="Reviews" title="Our best marketing is our clients." />
+        <SectionHead index="07" label="Reviews" title="Our best marketing is our clients." />
         <div className="reviews-grid">
           {config.testimonials.map(t => (
             <figure className="review reveal" key={t.name}>
@@ -509,8 +647,18 @@ function Reviews() {
 }
 
 /* ───────────────────────── Quote / Contact ───────────────────────── */
-function Quote() {
+function Quote({ prefill }) {
   const [status, setStatus] = useState('idle');
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    if (!prefill || !formRef.current) return;
+    const f = formRef.current;
+    const radio = f.querySelector(`input[name="project"][value="${prefill.project}"]`);
+    if (radio) radio.checked = true;
+    if (f.details) f.details.value = prefill.details;
+    setStatus('idle');
+  }, [prefill]);
 
   const submit = async e => {
     e.preventDefault();
@@ -541,7 +689,7 @@ function Quote() {
       <div className="container quote-grid">
         <div>
           <p className="label reveal">
-            <span>06</span> Free estimate
+            <span>08</span> Site visit
           </p>
           <SplitText text="Let’s build something solid." tag="h2" className="h2 h2-xl" splitType="words" textAlign="left" delay={60} mask />
           <p className="lead reveal">Tell us about your project. A real person — usually the owner — calls you back within one business day.</p>
@@ -571,7 +719,7 @@ function Quote() {
           </div>
         </div>
 
-        <form className="quote-form reveal" onSubmit={submit}>
+        <form className="quote-form reveal" onSubmit={submit} ref={formRef}>
           {status === 'sent' ? (
             <div className="form-done">
               <span className="done-icon">
@@ -725,7 +873,14 @@ function Footer() {
 /* ───────────────────────── App ───────────────────────── */
 export default function App() {
   const [ready, setReady] = useState(false);
+  const [prefill, setPrefill] = useState(null);
+  const [finePointer] = useState(() => window.matchMedia('(pointer: fine)').matches);
   const root = useRef(null);
+
+  const handleQuote = data => {
+    setPrefill({ ...data, at: Date.now() });
+    scrollToTarget('#quote');
+  };
 
   useEffect(() => {
     const lenis = initSmoothScroll();
@@ -758,16 +913,20 @@ export default function App() {
     <div ref={root}>
       {!ready && <Preloader onDone={() => setReady(true)} />}
       <Noise opacity={0.06} fixed fps={18} zIndex={90} />
+      {finePointer && ready && <Crosshair color={theme.accent} opacity={0.28} smoothing={0.25} showCoordinates targetEffect="lock" />}
+      <Gauge />
       <Nav />
       <main>
         <Hero ready={ready} />
-        <Marquee />
+        <Tape />
         <About />
         <Services />
+        <PlanToBuilt />
         <Projects />
+        <Estimate onQuote={handleQuote} />
         <Process />
         <Reviews />
-        <Quote />
+        <Quote prefill={prefill} />
       </main>
       <Footer />
       <div className="call-bar">

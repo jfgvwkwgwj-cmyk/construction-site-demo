@@ -66,6 +66,22 @@ const config = {
     { title: 'Cedar Creek Crossing', type: 'bridge', location: 'Cedar Falls', year: 2023, size: '120 ft span', category: 'Civil', image: '' }
   ],
 
+  // Instant price calculator. Rates are per unit, before the finish multiplier. Tune per company.
+  estimator: {
+    note: 'Ballpark only, based on recent local jobs. Your exact price comes after a free site visit.',
+    types: [
+      { name: 'New Home', icon: 'home', service: 'Custom Homes', unit: 'sq ft', min: 1000, max: 6000, step: 100, default: 2400, low: 185, high: 260, weeksBase: 16, weeksPer1000: 6 },
+      { name: 'Addition', icon: 'plus', service: 'Additions', unit: 'sq ft', min: 150, max: 1500, step: 25, default: 450, low: 210, high: 340, weeksBase: 6, weeksPer1000: 10 },
+      { name: 'Remodel', icon: 'hammer', service: 'Renovations', unit: 'sq ft', min: 80, max: 3000, step: 10, default: 300, low: 120, high: 260, weeksBase: 3, weeksPer1000: 9 },
+      { name: 'Commercial', icon: 'building', service: 'Commercial', unit: 'sq ft', min: 1500, max: 40000, step: 500, default: 8000, low: 140, high: 230, weeksBase: 14, weeksPer1000: 1.2 }
+    ],
+    finishes: [
+      { name: 'Standard', mult: 0.9, hint: 'Durable builder-grade materials. Smart value.' },
+      { name: 'Premium', mult: 1.15, hint: 'Upgraded fixtures, hardwood, quartz counters.' },
+      { name: 'Luxury', mult: 1.55, hint: 'Custom millwork, stone, designer everything.' }
+    ]
+  },
+
   process: [
     { title: 'Site Visit', text: 'We walk the site with you, listen, and measure — free of charge.' },
     { title: 'Fixed Proposal', text: 'A detailed, line-item price in writing. No surprise change orders.' },

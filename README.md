@@ -33,8 +33,12 @@ For real lead capture, create a free form at Formspree or Getform and paste the 
 
 ## What's included
 
+- **3D hero**: a tower builds itself floor by floor as you scroll (crane, slabs, glass, lights on), with a live build readout and a "Topped out" stamp
+- **Instant cost estimator**: project type, size slider and finish level give a live price range and build time, then pre-fill the quote form. Rates live in `config.estimator`
+- **Plan → built slider**: drag to compare the blueprint with the finished house
+- Crossed caution-tape banners, surveyor crosshair cursor, scroll elevation gauge
 - Preloader, smooth scroll, sticky nav that hides on scroll
-- Hero with animated headline, rotating services and an interactive dot-grid
+- Animated headline with rotating services
 - Scroll-velocity marquee, scroll-reveal story text, count-up stats
 - Spotlight service cards, pinned horizontal project gallery, scrubbed process timeline
 - Reviews, service area, quote form with project-type chips
@@ -47,5 +51,8 @@ For real lead capture, create a free form at Formspree or Getform and paste the 
 - `src/config.js` — **the only file you normally edit**
 - `src/App.jsx` — page sections
 - `src/styles.css` — design
+- `src/components/BuildScene.jsx` — the 3D building (Three.js)
+- `src/components/Estimator.jsx` — price calculator
+- `src/components/Compare.jsx` — plan vs built slider
 - `src/components/Blueprint.jsx` — animated line drawings
 - `src/bits/` — React Bits components
