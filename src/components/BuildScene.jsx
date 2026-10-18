@@ -19,7 +19,7 @@ const seg = (p, a, b) => clamp01((p - a) / (b - a));
 const easeOut = t => 1 - Math.pow(1 - t, 3);
 const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-export default function BuildScene({ progressRef, accent = '#F5A524', bg = '#0E0F11', hudRef, mobile = false }) {
+export default function BuildScene({ progressRef, scrollRef, accent = '#C9A267', bg = '#0B1828', hudRef, mobile = false }) {
   const mountRef = useRef(null);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function BuildScene({ progressRef, accent = '#F5A524', bg = '#0E0
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
-    const grid = new THREE.GridHelper(80, 80, accentC, 0x2a2c30);
+    const grid = new THREE.GridHelper(80, 80, accentC, bgC.clone().offsetHSL(0, -0.1, 0.09));
     grid.material.transparent = true;
     grid.material.opacity = 0.22;
     grid.position.y = 0.002;
@@ -336,7 +336,7 @@ export default function BuildScene({ progressRef, accent = '#F5A524', bg = '#0E0
       renderer.setSize(vw, vh);
       camera.aspect = vw / vh;
       const wide = vw > 900;
-      camera.setViewOffset(vw, vh, wide ? -vw * 0.2 : -vw * 0.12, wide ? 0 : -vh * 0.2, vw, vh);
+      camera.setViewOffset(vw, vh, wide ? -vw * 0.2 : -vw * 0.22, wide ? 0 : -vh * 0.2, vw, vh);
       camera.updateProjectionMatrix();
     };
     resize();
@@ -360,7 +360,7 @@ export default function BuildScene({ progressRef, accent = '#F5A524', bg = '#0E0
     let p = reduce ? 1 : 0;
     let raf = 0;
     const clock = new THREE.Clock();
-    const PHASES = ['Surveying site', 'Pouring foundation', 'Raising steel', 'Placing slabs', 'Glazing façade', 'Topped out'];
+    const PHASES = ['Surveying site', 'Pouring foundation', 'Raising steel', 'Placing slabs', 'Glazing façade', 'Complete'];
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
@@ -448,9 +448,10 @@ export default function BuildScene({ progressRef, accent = '#F5A524', bg = '#0E0
       // camera orbit — rises and swings around as the tower goes up
       mouse.x += (mouse.tx - mouse.x) * 0.05;
       mouse.y += (mouse.ty - mouse.y) * 0.05;
-      const ang = -0.75 + p * 0.9 + mouse.x * 0.12 + (reduce ? 0 : Math.sin(t * 0.1) * 0.03);
-      const radius = (mobile ? 44 : 36) + p * 4;
-      const camY = 6 + p * 7 - mouse.y * 1.2;
+      const sc = scrollRef?.current || 0;
+      const ang = -0.75 + p * 0.9 + sc * 0.6 + mouse.x * 0.12 + (reduce ? 0 : Math.sin(t * 0.1) * 0.03);
+      const radius = (mobile ? 44 : 36) + p * 4 + sc * 6;
+      const camY = 6 + p * 7 + sc * 6 - mouse.y * 1.2;
       camera.position.set(Math.sin(ang) * radius, camY, Math.cos(ang) * radius);
       camera.lookAt(1.5, 4.2 + p * 3, 0);
 
@@ -490,7 +491,7 @@ export default function BuildScene({ progressRef, accent = '#F5A524', bg = '#0E0
       renderer.dispose();
       mount.removeChild(renderer.domElement);
     };
-  }, [accent, bg, mobile, progressRef, hudRef]);
+  }, [accent, bg, mobile, progressRef, scrollRef, hudRef]);
 
   return <div ref={mountRef} className="build-scene" aria-hidden="true" />;
 }

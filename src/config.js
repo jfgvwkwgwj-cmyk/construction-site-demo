@@ -23,15 +23,20 @@ const config = {
   },
 
   theme: {
-    accent: '#F5A524', // safety amber — try '#E4572E' (brick) or '#3DDC97' (green)
-    bg: '#0E0F11',
-    surface: '#16181B',
-    text: '#F2EFEA'
+    // Light "paper" sections + deep navy sections, with brass as the accent.
+    bg: '#F3F3EF', // page background (light)
+    surface: '#FFFFFF', // cards on light sections
+    text: '#0E1B2C', // navy ink
+    accent: '#9A7438', // brass, readable on light backgrounds
+    navy: '#0B1828', // dark sections (hero, estimate, footer)
+    navySurface: '#12243A',
+    paper: '#ECE9E1',
+    brass: '#C9A267' // brighter brass for dark sections
   },
 
   hero: {
-    eyebrow: 'Licensed · Bonded · Insured',
-    headline: 'We build what lasts.',
+    eyebrow: 'General Contractor · Est. 2004',
+    headline: 'Built right. Built to last.',
     rotating: ['Custom Homes', 'Commercial', 'Renovations', 'Additions', 'Concrete'],
     sub: 'From the first footing to the final walkthrough, one crew owns your project — on schedule, on budget, built to outlast the mortgage.',
     // Optional background photo, e.g. '/images/hero.jpg'. Leave empty for the animated blueprint.

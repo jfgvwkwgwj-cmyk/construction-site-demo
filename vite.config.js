@@ -18,7 +18,7 @@ function companyHtml() {
     makesOffer: services.map(s => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.title } }))
   };
   const vars = Object.entries(theme)
-    .map(([k, v]) => `--${k}:${v};`)
+    .map(([k, v]) => `--${k.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}:${v};`)
     .join('');
   return {
     name: 'company-html',
@@ -28,8 +28,8 @@ function companyHtml() {
       html
         .replaceAll('%SEO_TITLE%', seo.title)
         .replaceAll('%SEO_DESC%', seo.description)
-        .replaceAll('%THEME_BG%', theme.bg)
-        .replaceAll('%THEME_ACCENT_ENC%', encodeURIComponent(theme.accent))
+        .replaceAll('%THEME_BG%', theme.navy)
+        .replaceAll('%THEME_ACCENT_ENC%', encodeURIComponent(theme.brass))
         .replace('%THEME_VARS%', vars)
         .replace('%JSON_LD%', JSON.stringify(jsonLd).replace(/</g, '\\u003c'))
     }

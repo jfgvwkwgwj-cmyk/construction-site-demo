@@ -49,7 +49,7 @@ function BuiltHouse() {
       <rect x="90" y="150" width="220" height="110" fill="url(#siding)" />
       {/* roof */}
       <path d="M70 158L200 70L330 158Z" fill="url(#roofG)" />
-      <path d="M70 158L200 70L330 158" fill="none" stroke="#f5a524" strokeWidth="2.5" />
+      <path d="M70 158L200 70L330 158" fill="none" stroke="#C9A267" strokeWidth="2.5" />
       <path d="M90 158H310" stroke="#00000033" strokeWidth="6" />
       {/* windows */}
       {[110, 245].map(x => (
@@ -62,7 +62,7 @@ function BuiltHouse() {
       {/* door */}
       <rect x="176" y="191" width="48" height="69" fill="#4a4540" />
       <rect x="180" y="195" width="40" height="65" fill="#7a3b26" />
-      <circle cx="212" cy="230" r="2.2" fill="#f5a524" />
+      <circle cx="212" cy="230" r="2.2" fill="#C9A267" />
       <rect x="168" y="186" width="64" height="6" fill="#2b2d31" />
       {/* porch light glow */}
       <circle cx="200" cy="182" r="22" fill="#ffd08a" opacity="0.12" />

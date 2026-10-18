@@ -142,7 +142,7 @@ export default function Estimator({ onQuote }) {
               <strong>Permits, labor, materials, cleanup</strong>
             </div>
           </div>
-          <button type="button" className="btn btn-solid btn-lg" onClick={send}>
+          <button type="button" className="btn btn-primary btn-lg" onClick={send}>
             Lock in an exact quote <Icon name="arrow" size={18} />
           </button>
           <p className="est-note">{note}</p>
