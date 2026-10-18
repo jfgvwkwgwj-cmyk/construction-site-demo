@@ -3,6 +3,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import Blueprint from './Blueprint';
+import config from '../config';
+
+const BRICK = config.buildStyle === 'brick';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -31,6 +34,15 @@ function BuiltHouse() {
         <pattern id="siding" width="8" height="8" patternUnits="userSpaceOnUse">
           <path d="M0 7.5H8" stroke="#00000018" strokeWidth="1" />
         </pattern>
+        <pattern id="brick" width="16" height="8" patternUnits="userSpaceOnUse">
+          <rect width="16" height="8" fill="#a65a42" />
+          <rect x="0" y="0" width="7.4" height="3.4" fill="#b2634a" />
+          <rect x="8" y="0" width="7.4" height="3.4" fill="#9c5039" />
+          <rect x="-4" y="4" width="7.4" height="3.4" fill="#a95c43" />
+          <rect x="4" y="4" width="7.4" height="3.4" fill="#b86a50" />
+          <rect x="12" y="4" width="7.4" height="3.4" fill="#9a4f38" />
+          <path d="M0 3.7H16M0 7.7H16M7.7 0V3.7M15.7 0V3.7M3.7 4V8M11.7 4V8" stroke="#d6cbbb" strokeWidth="0.6" />
+        </pattern>
       </defs>
       <rect width="400" height="300" fill="url(#sky)" />
       <circle cx="330" cy="62" r="16" fill="#f7d9a8" opacity="0.85" />
@@ -45,24 +57,30 @@ function BuiltHouse() {
       <rect x="250" y="80" width="24" height="44" fill="#7a4b38" />
       <rect x="247" y="76" width="30" height="7" fill="#5c382a" />
       {/* walls */}
-      <rect x="90" y="150" width="220" height="110" fill="url(#wall)" />
-      <rect x="90" y="150" width="220" height="110" fill="url(#siding)" />
+      {BRICK ? (
+        <rect x="90" y="150" width="220" height="110" fill="url(#brick)" />
+      ) : (
+        <>
+          <rect x="90" y="150" width="220" height="110" fill="url(#wall)" />
+          <rect x="90" y="150" width="220" height="110" fill="url(#siding)" />
+        </>
+      )}
       {/* roof */}
       <path d="M70 158L200 70L330 158Z" fill="url(#roofG)" />
-      <path d="M70 158L200 70L330 158" fill="none" stroke="#C9A267" strokeWidth="2.5" />
+      <path d="M70 158L200 70L330 158" fill="none" stroke={config.theme.accentOnDark} strokeWidth="2.5" />
       <path d="M90 158H310" stroke="#00000033" strokeWidth="6" />
       {/* windows */}
       {[110, 245].map(x => (
         <g key={x}>
-          <rect x={x - 4} y={171} width={53} height={48} fill="#4a4540" />
+          <rect x={x - 4} y={171} width={53} height={48} fill={BRICK ? '#f1efe9' : '#4a4540'} />
           <rect x={x} y={175} width={45} height={40} fill="url(#glow)" />
-          <path d={`M${x + 22.5} 175v40M${x} 195h45`} stroke="#4a4540" strokeWidth="2.5" />
+          <path d={`M${x + 22.5} 175v40M${x} 195h45`} stroke={BRICK ? '#f1efe9' : '#4a4540'} strokeWidth="2.5" />
         </g>
       ))}
       {/* door */}
-      <rect x="176" y="191" width="48" height="69" fill="#4a4540" />
-      <rect x="180" y="195" width="40" height="65" fill="#7a3b26" />
-      <circle cx="212" cy="230" r="2.2" fill="#C9A267" />
+      <rect x="176" y="191" width="48" height="69" fill={BRICK ? '#f1efe9' : '#4a4540'} />
+      <rect x="180" y="195" width="40" height="65" fill={BRICK ? '#26352f' : '#7a3b26'} />
+      <circle cx="212" cy="230" r="2.2" fill={config.theme.accentOnDark} />
       <rect x="168" y="186" width="64" height="6" fill="#2b2d31" />
       {/* porch light glow */}
       <circle cx="200" cy="182" r="22" fill="#ffd08a" opacity="0.12" />

@@ -8,6 +8,7 @@ import { initSmoothScroll, scrollToTarget, getLenis } from './lib/scroll';
 import Icon from './components/Icon';
 import Blueprint from './components/Blueprint';
 import BuildScene from './components/BuildScene';
+import HouseScene from './components/HouseScene';
 import Compare from './components/Compare';
 import ProcessDrawing from './components/ProcessDrawing';
 
@@ -25,6 +26,9 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const { company, theme, hero } = config;
 const telHref = `tel:${company.phone.replace(/[^\d+]/g, '')}`;
 const years = new Date().getFullYear() - company.founded;
+const fill = text => String(text).replace('{years}', years);
+const monogram = company.monogram || company.short[0];
+const hasEmail = Boolean(company.email);
 
 const NAV = [
   ['Services', '#services'],
@@ -64,7 +68,7 @@ function Preloader({ onDone }) {
   return (
     <div className="preloader" ref={ref}>
       <div className="pre-inner">
-        <span className="pre-mark logo-mark">{company.short[0]}</span>
+        <span className="pre-mark logo-mark">{monogram}</span>
         <div className="pre-name">{company.name}</div>
         <div className="pre-bar">
           <i />
@@ -109,7 +113,7 @@ function Nav() {
         className={`nav ${state.solid ? 'is-solid' : ''} ${state.light && !open ? 'is-light' : ''} ${state.hidden && !open ? 'is-hidden' : ''}`}
       >
         <a href="#top" onClick={navGo} className="logo" aria-label={company.name}>
-          <span className="logo-mark">{company.short[0]}</span>
+          <span className="logo-mark">{monogram}</span>
           <span className="logo-text">
             {company.short}
             <small>{company.tagline}</small>
@@ -201,14 +205,26 @@ function Hero({ ready }) {
 
   return (
     <section className="hero is-dark" id="top" ref={ref}>
-      <BuildScene
-        progressRef={progressRef}
-        scrollRef={scrollRef}
-        hudRef={hudRef}
-        accent={theme.brass}
-        bg={theme.navy}
-        mobile={mobile}
-      />
+      {hero.model === 'house' ? (
+        <HouseScene
+          progressRef={progressRef}
+          scrollRef={scrollRef}
+          hudRef={hudRef}
+          accent={theme.accentOnDark}
+          bg={theme.dark}
+          mobile={mobile}
+          metric={config.units === 'metric'}
+        />
+      ) : (
+        <BuildScene
+          progressRef={progressRef}
+          scrollRef={scrollRef}
+          hudRef={hudRef}
+          accent={theme.accentOnDark}
+          bg={theme.dark}
+          mobile={mobile}
+        />
+      )}
       <div className="hero-shade" />
 
       <div className="container hero-inner">
@@ -248,8 +264,8 @@ function Hero({ ready }) {
                   duration={6}
                   radius={6}
                   glow={0.35}
-                  backgroundColor={theme.brass}
-                  textColor={theme.navy}
+                  backgroundColor={theme.accentOnDark}
+                  textColor={theme.dark}
                   className="btn-star"
                 >
                   Book a free site visit <Icon name="arrow" size={18} />
@@ -279,24 +295,15 @@ function Hero({ ready }) {
           <i data-hud="bar" />
         </div>
         <div className="hud-row">
-          <span>
-            Level <b data-hud="lvl">00</b>/09
-          </span>
-          <span>
-            EL <b data-hud="el">+000'</b>
-          </span>
+          <span data-hud="left">&nbsp;</span>
+          <span data-hud="right">&nbsp;</span>
         </div>
       </aside>
 
       <div className="container hero-trust">
-        {[
-          ['shield', 'Licensed, bonded & insured'],
-          ['clock', `${years} years in ${company.city}`],
-          ['check', 'Fixed, written pricing'],
-          ['pin', 'Local crews, no subcontract chains']
-        ].map(([icon, label]) => (
+        {hero.trust.map(([icon, label]) => (
           <span key={label} className="trust-item">
-            <Icon name={icon} size={16} /> {label}
+            <Icon name={icon} size={16} /> {fill(label)}
           </span>
         ))}
       </div>
@@ -306,7 +313,7 @@ function Hero({ ready }) {
 
 /* ───────────────────────── Credentials strip ───────────────────────── */
 function Credentials() {
-  const items = ['Licensed General Contractor', 'BBB Accredited', 'OSHA-30 Site Leads', 'Fully Bonded & Insured', 'Written Workmanship Warranty', 'EPA Lead-Safe Certified'];
+  const items = config.credentials;
   return (
     <div className="creds" aria-label="Credentials">
       <ScrollVelocity texts={[items.join('   ·   ') + '   ·   ']} velocity={18} numCopies={4} className="creds-text" />
@@ -338,12 +345,22 @@ function About() {
         <ScrollReveal baseOpacity={0.15} enableBlur blurStrength={4} baseRotation={0} textClassName="about-text">
           {config.about}
         </ScrollReveal>
-        <div className="stats">
+        <div className="stats" style={{ '--n': config.stats.length }}>
           {config.stats.map(s => (
             <div className="stat reveal" key={s.label}>
-              <div className="stat-num">
-                <CountUp to={s.value} decimals={s.decimals} duration={2.2} separator="," />
-                <span className="stat-suffix">{s.suffix}</span>
+              <div className={`stat-num ${s.text ? 'stat-num-text' : ''}`}>
+                {s.text ? (
+                  s.text
+                ) : (
+                  <CountUp
+                    to={s.value === 'years' ? years : s.value}
+                    from={s.plain ? Math.max(0, s.value - 40) : 0}
+                    decimals={s.decimals}
+                    duration={2.2}
+                    separator={s.plain ? '' : ','}
+                  />
+                )}
+                {s.suffix && <span className="stat-suffix">{s.suffix}</span>}
               </div>
               <div className="stat-label">{s.label}</div>
             </div>
@@ -359,8 +376,8 @@ function Services() {
   return (
     <section className="section services" id="services">
       <div className="container">
-        <SectionHead index="02" label="Services" title="One contractor, from footing to finish.">
-          A single licensed team for the whole job. One contract, one point of contact, one standard of work.
+        <SectionHead index="02" label="Services" title={config.servicesTitle || 'One contractor, from footing to finish.'}>
+          {config.servicesLead || 'A single licensed team for the whole job. One contract, one point of contact, one standard of work.'}
         </SectionHead>
         <div className="services-grid">
           {config.services.map((s, i) => (
@@ -453,7 +470,7 @@ function Projects() {
     <section className="section projects" id="projects" ref={ref}>
       <div className="proj-pin">
         <div className="container proj-head">
-          <SectionHead index="04" label="Selected work" title="Built here. Still standing." />
+          <SectionHead index="04" label={config.projectsLabel} title={config.projectsTitle} />
           <div className="proj-progress" aria-hidden="true">
             <i />
           </div>
@@ -600,6 +617,28 @@ function Reviews() {
   );
 }
 
+/* ───────────────────────── Reasons (used until real reviews exist) ───────────────────────── */
+function Reasons() {
+  return (
+    <section className="section reviews" id="reviews">
+      <div className="container">
+        <SectionHead index="06" label="Why choose us" title={config.reasonsTitle} />
+        <div className="reasons-grid">
+          {config.reasons.map(r => (
+            <div className="reason reveal" key={r.title}>
+              <span className="service-icon">
+                <Icon name={r.icon} size={22} />
+              </span>
+              <h3>{r.title}</h3>
+              <p>{r.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────── Quote / Contact ───────────────────────── */
 function Quote() {
   const [status, setStatus] = useState('idle');
@@ -621,6 +660,10 @@ function Quote() {
       }
       return;
     }
+    if (!hasEmail) {
+      setStatus('preview');
+      return;
+    }
     const body = Object.entries(data)
       .map(([k, v]) => `${k}: ${v}`)
       .join('\n');
@@ -636,25 +679,31 @@ function Quote() {
             <span>07</span> Book a site visit
           </p>
           <SplitText text="Let’s talk about your project." tag="h2" className="h2" splitType="words" textAlign="left" delay={50} mask />
-          <p className="lead reveal">Tell us what you’re planning. A project lead, usually the owner, calls you back within one business day.</p>
+          <p className="lead reveal">
+            {config.quoteLead || 'Tell us what you’re planning. A project lead, usually the owner, calls you back within one business day.'}
+          </p>
           <ul className="contact-list reveal">
             <li>
               <Icon name="phone" size={20} />
               <a href={telHref}>{company.phone}</a>
             </li>
-            <li>
-              <Icon name="mail" size={20} />
-              <a href={`mailto:${company.email}`}>{company.email}</a>
-            </li>
+            {hasEmail && (
+              <li>
+                <Icon name="mail" size={20} />
+                <a href={`mailto:${company.email}`}>{company.email}</a>
+              </li>
+            )}
             <li>
               <Icon name="pin" size={20} /> {company.address}
             </li>
-            <li>
-              <Icon name="clock" size={20} /> {company.hours}
-            </li>
+            {company.hours && (
+              <li>
+                <Icon name="clock" size={20} /> {company.hours}
+              </li>
+            )}
           </ul>
           <div className="area reveal">
-            <span className="area-label">Service area</span>
+            <span className="area-label">Areas we cover</span>
             <div className="area-pills">
               {company.serviceArea.map(c => (
                 <span key={c}>{c}</span>
@@ -664,7 +713,15 @@ function Quote() {
         </div>
 
         <form className="quote-form reveal" onSubmit={submit}>
-          {status === 'sent' ? (
+          {status === 'preview' ? (
+            <div className="form-done">
+              <span className="done-icon">
+                <Icon name="check" size={32} />
+              </span>
+              <h3>Form preview</h3>
+              <p>This is a concept site, so the form isn’t connected yet. Once it goes live, requests will arrive straight in your inbox.</p>
+            </div>
+          ) : status === 'sent' ? (
             <div className="form-done">
               <span className="done-icon">
                 <Icon name="check" size={32} />
@@ -685,7 +742,7 @@ function Quote() {
                 </label>
                 <label className="field">
                   <span>Phone</span>
-                  <input id="q-phone" name="phone" required type="tel" autoComplete="tel" placeholder="(555) 000-0000" />
+                  <input id="q-phone" name="phone" required type="tel" autoComplete="tel" placeholder={config.phonePlaceholder} />
                 </label>
               </div>
               <label className="field">
@@ -710,10 +767,9 @@ function Quote() {
                     <option value="" disabled>
                       Select a range
                     </option>
-                    <option>Under $25k</option>
-                    <option>$25k – $75k</option>
-                    <option>$75k – $200k</option>
-                    <option>$200k+</option>
+                    {config.budgets.map(b => (
+                      <option key={b}>{b}</option>
+                    ))}
                   </select>
                 </label>
                 <label className="field">
@@ -737,7 +793,7 @@ function Quote() {
                 {status === 'sending' ? 'Sending…' : 'Request my site visit'} <Icon name="arrow" size={18} />
               </button>
               {status === 'error' && <p className="form-error">That didn’t go through. Please call {company.phone}.</p>}
-              <p className="form-note">No obligation. {company.license}</p>
+              <p className="form-note">No obligation. {company.registration}</p>
             </>
           )}
         </form>
@@ -766,14 +822,14 @@ function Footer() {
       <div className="container footer-top">
         <div>
           <a href="#top" onClick={go} className="logo">
-            <span className="logo-mark">{company.short[0]}</span>
+            <span className="logo-mark">{monogram}</span>
             <span className="logo-text">
               {company.short}
               <small>{company.tagline}</small>
             </span>
           </a>
           <p className="footer-blurb">
-            {company.license} · Fully insured · Serving {company.city} and surrounding areas since {company.founded}.
+            {company.registration}. Serving {company.city} and surrounding areas since {company.founded}.
           </p>
         </div>
         <div className="footer-cols">
@@ -788,17 +844,19 @@ function Footer() {
           <div>
             <h4>Contact</h4>
             <a href={telHref}>{company.phone}</a>
-            <a href={`mailto:${company.email}`}>{company.email}</a>
-            <span>{company.hours}</span>
+            {hasEmail && <a href={`mailto:${company.email}`}>{company.email}</a>}
+            {company.hours && <span>{company.hours}</span>}
           </div>
-          <div>
-            <h4>Follow</h4>
-            {Object.entries(company.socials).map(([k, v]) => (
-              <a key={k} href={v} target="_blank" rel="noreferrer">
-                {k[0].toUpperCase() + k.slice(1)}
-              </a>
-            ))}
-          </div>
+          {Object.keys(company.socials).length > 0 && (
+            <div>
+              <h4>Follow</h4>
+              {Object.entries(company.socials).map(([k, v]) => (
+                <a key={k} href={v} target="_blank" rel="noreferrer">
+                  {k[0].toUpperCase() + k.slice(1)}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div
@@ -854,8 +912,14 @@ export default function App() {
   );
 
   return (
-    <div ref={root}>
+    <div ref={root} className={config.concept ? 'has-concept' : ''}>
       {!ready && <Preloader onDone={() => setReady(true)} />}
+      {config.concept && (
+        <div className="concept-bar" role="note">
+          Website concept prepared for {config.concept}
+          <span className="hide-sm">&nbsp;· Preview only</span>
+        </div>
+      )}
       <Nav />
       <main>
         <Hero ready={ready} />
@@ -865,7 +929,7 @@ export default function App() {
         <PlanToBuilt />
         <Projects />
         <Process />
-        <Reviews />
+        {config.testimonials.length ? <Reviews /> : <Reasons />}
         <Quote />
       </main>
       <Footer />

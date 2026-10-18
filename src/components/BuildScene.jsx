@@ -465,12 +465,13 @@ export default function BuildScene({ progressRef, scrollRef, accent = '#C9A267',
           p < 0.02 ? PHASES[0] : p < 0.06 ? PHASES[1] : p < 0.86 ? (lvl % 2 ? PHASES[2] : PHASES[3]) : p < 0.97 ? PHASES[4] : PHASES[5];
         const h = hudRef.current;
         h.querySelector('[data-hud=pct]').textContent = String(pct).padStart(3, '0');
-        h.querySelector('[data-hud=lvl]').textContent = String(lvl).padStart(2, '0');
         h.querySelector('[data-hud=phase]').textContent = phase;
         h.querySelector('[data-hud=bar]').style.transform = `scaleX(${p})`;
-        h.querySelector('[data-hud=el]').textContent = `+${Math.round(lvl * 12.5)
-          .toString()
-          .padStart(3, '0')}'`;
+        if (h.dataset.lvl !== String(lvl)) {
+          h.dataset.lvl = String(lvl);
+          h.querySelector('[data-hud=left]').innerHTML = `Level <b>${String(lvl).padStart(2, '0')}</b>/${String(FLOORS).padStart(2, '0')}`;
+          h.querySelector('[data-hud=right]').innerHTML = `EL <b>+${String(Math.round(lvl * 12.5)).padStart(3, '0')}'</b>`;
+        }
       }
     };
     tick();

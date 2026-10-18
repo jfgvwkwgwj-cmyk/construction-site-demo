@@ -4,7 +4,10 @@
   "description": "",
   "scripts": {
     "dev": "vite",
+    "dev:jm": "SITE=jm-contractors vite",
     "build": "vite build",
+    "build:jm": "SITE=jm-contractors vite build --outDir dist/jm-contractors",
+    "build:all": "npm run build && npm run build:jm",
     "preview": "vite preview"
   },
   "keywords": [],

@@ -1,4 +1,7 @@
 import { forwardRef } from 'react';
+import config from '../config';
+
+const SURVEY = config.units === 'metric' ? '26.8 m' : `88'-0"`;
 
 /*
   An architectural elevation drawn in four stages, one per process step.
@@ -39,7 +42,7 @@ const ProcessDrawing = forwardRef(function ProcessDrawing(_, ref) {
         ))}
         <P d={`M70 ${GROUND + 52}H340M70 ${GROUND + 46}v12M340 ${GROUND + 46}v12`} className="pd-line pd-dim" />
         <text x="205" y={GROUND + 47} className="pd-text">
-          SURVEYED · 88'-0"
+          SURVEYED · {SURVEY}
         </text>
         {/* survey stakes */}
         {[70, 340].map(x => (

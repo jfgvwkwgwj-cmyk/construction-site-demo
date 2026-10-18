@@ -2,8 +2,15 @@ import { useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import config from '../config';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+// Drawing labels in the company's units
+const U =
+  config.units === 'metric'
+    ? { houseW: '12.8 m', houseH: '8.7 m', extW: 'NEW EXTENSION · 24 m²', extH: '3.0 m', whSize: '3,500 m²', bridge: '36 m SPAN', lvl: '5 LVL' }
+    : { houseW: `42'-0"`, houseH: `28'-6"`, extW: 'NEW EXTENSION · 450 SF', extH: `10'-0"`, whSize: '38,000 SF', bridge: `120'-0" SPAN`, lvl: '5 LVL' };
 
 // Every shape uses pathLength="1" so GSAP can "draw" it by animating the dash offset.
 const L = props => <path pathLength="1" className="bp-line" {...props} />;
@@ -24,8 +31,8 @@ const drawings = {
       <L d="M132.5 175v40M110 195h45M267.5 175v40M245 195h45" className="bp-line bp-thin" />
       <L d="M90 280H310M90 274v12M310 274v12" className="bp-line bp-dim" />
       <L d="M345 70V260M339 70h12M339 260h12" className="bp-line bp-dim" />
-      <text x="200" y="296" className="bp-text">42'-0"</text>
-      <text x="362" y="168" className="bp-text" transform="rotate(90 362 168)">28'-6"</text>
+      <text x="200" y="296" className="bp-text">{U.houseW}</text>
+      <text x="362" y="168" className="bp-text" transform="rotate(90 362 168)">{U.houseH}</text>
     </>
   ),
   extension: () => (
@@ -46,8 +53,8 @@ const drawings = {
       <L d="M252 198v62M280 198v62M308 198v62" className="bp-line bp-thin" />
       <L d="M210 280H350M210 274v12M350 274v12" className="bp-line bp-dim" />
       <L d="M366 182V260M360 182h12M360 260h12" className="bp-line bp-dim" />
-      <text x="280" y="296" className="bp-text">NEW EXTENSION · 450 SF</text>
-      <text x="382" y="221" className="bp-text" transform="rotate(90 382 221)">10'-0"</text>
+      <text x="280" y="296" className="bp-text">{U.extW}</text>
+      <text x="382" y="221" className="bp-text" transform="rotate(90 382 221)">{U.extH}</text>
     </>
   ),
   loft: () => (
@@ -83,7 +90,7 @@ const drawings = {
       <R x={140} y={50} w={20} h={8} />
       <R x={318} y={26} w={22} h={14} />
       <L d="M105 60V270M99 60h12M99 270h12" className="bp-line bp-dim" />
-      <text x="88" y="168" className="bp-text" transform="rotate(-90 88 168)">5 LVL</text>
+      <text x="88" y="168" className="bp-text" transform="rotate(-90 88 168)">{U.lvl}</text>
     </>
   ),
   warehouse: () => (
@@ -99,7 +106,7 @@ const drawings = {
       ))}
       <L d="M40 160H360" className="bp-line bp-thin" />
       <L d="M40 280H360M40 274v12M360 274v12" className="bp-line bp-dim" />
-      <text x="200" y="296" className="bp-text">38,000 SF</text>
+      <text x="200" y="296" className="bp-text">{U.whSize}</text>
     </>
   ),
   interior: () => (
@@ -132,7 +139,7 @@ const drawings = {
       <R x={330} y={222} w={20} h={58} />
       <L d="M10 280H390" className="bp-line bp-thin" />
       <L d="M60 250H340M60 244v12M340 244v12" className="bp-line bp-dim" />
-      <text x="200" y="266" className="bp-text">120'-0" SPAN</text>
+      <text x="200" y="266" className="bp-text">{U.bridge}</text>
     </>
   )
 };
