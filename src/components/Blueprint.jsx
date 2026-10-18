@@ -28,6 +28,50 @@ const drawings = {
       <text x="362" y="168" className="bp-text" transform="rotate(90 362 168)">28'-6"</text>
     </>
   ),
+  extension: () => (
+    <>
+      <L d="M20 260H380" className="bp-line bp-strong" />
+      {/* existing house, drawn light */}
+      <R x={60} y={128} w={150} h={132} className="bp-line bp-thin" />
+      <L d="M48 136L135 74L222 136" className="bp-line bp-thin" />
+      <R x={82} y={150} w={36} h={34} className="bp-line bp-thin" />
+      <R x={150} y={150} w={36} h={34} className="bp-line bp-thin" />
+      <R x={82} y={204} w={36} h={34} className="bp-line bp-thin" />
+      <text x="135" y="64" className="bp-text">EXISTING</text>
+      {/* new single-storey rear extension */}
+      <R x={210} y={182} w={140} h={78} />
+      <L d="M204 182H356" className="bp-line bp-strong" />
+      <L d="M252 182v-12h52v12" className="bp-line bp-strong" />
+      <R x={224} y={198} w={112} h={62} />
+      <L d="M252 198v62M280 198v62M308 198v62" className="bp-line bp-thin" />
+      <L d="M210 280H350M210 274v12M350 274v12" className="bp-line bp-dim" />
+      <L d="M366 182V260M360 182h12M360 260h12" className="bp-line bp-dim" />
+      <text x="280" y="296" className="bp-text">NEW EXTENSION · 450 SF</text>
+      <text x="382" y="221" className="bp-text" transform="rotate(90 382 221)">10'-0"</text>
+    </>
+  ),
+  loft: () => (
+    <>
+      <L d="M20 260H380" className="bp-line bp-strong" />
+      {/* existing house, drawn light */}
+      <R x={90} y={150} w={220} h={110} className="bp-line bp-thin" />
+      <L d="M70 158L200 70L330 158" className="bp-line bp-thin" />
+      <R x={180} y={195} w={40} h={65} className="bp-line bp-thin" />
+      <R x={110} y={175} w={45} h={40} className="bp-line bp-thin" />
+      <R x={245} y={175} w={45} h={40} className="bp-line bp-thin" />
+      {/* new dormer + roof lights */}
+      <R x={170} y={102} w={60} h={40} />
+      <L d="M162 102H238" className="bp-line bp-strong" />
+      <R x={180} y={110} w={40} h={24} />
+      <L d="M200 110v24" className="bp-line bp-thin" />
+      <R x={118} y={134} w={20} h={12} />
+      <R x={262} y={134} w={20} h={12} />
+      <L d="M238 116L318 104" className="bp-line bp-dim" />
+      <text x="342" y="100" className="bp-text">NEW DORMER</text>
+      <L d="M90 280H310M90 274v12M310 274v12" className="bp-line bp-dim" />
+      <text x="200" y="296" className="bp-text">LOFT · 2 BED + BATH</text>
+    </>
+  ),
   tower: () => (
     <>
       <L d="M20 270H380" className="bp-line bp-strong" />

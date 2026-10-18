@@ -5,6 +5,8 @@ const paths = {
   plus: 'M3 20h18M5 20V9l7-5 7 5v11M12 10v6M9 13h6',
   layers: 'M12 3l9 5-9 5-9-5zM3 13l9 5 9-5M3 17.5l9 4.5 9-4.5',
   roof: 'M2 13L12 4l10 9M5 11v9h14v-9M9 20v-5h6v5',
+  stairs: 'M3 20h5v-4h4v-4h4V8h5M3 20h18',
+  bath: 'M3 12h18v3a5 5 0 01-5 5H8a5 5 0 01-5-5zM6 12V6a2 2 0 014 0M7 20l-1 2M17 20l1 2',
   phone: 'M5 3h4l2 5-2.5 1.5a11 11 0 006 6L16 13l5 2v4a2 2 0 01-2 2A16 16 0 013 5a2 2 0 012-2z',
   arrow: 'M5 12h14M13 6l6 6-6 6',
   check: 'M4 12l5 5L20 6',

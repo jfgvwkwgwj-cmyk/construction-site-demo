@@ -8,7 +8,6 @@ import { initSmoothScroll, scrollToTarget, getLenis } from './lib/scroll';
 import Icon from './components/Icon';
 import Blueprint from './components/Blueprint';
 import BuildScene from './components/BuildScene';
-import Estimator from './components/Estimator';
 import Compare from './components/Compare';
 import ProcessDrawing from './components/ProcessDrawing';
 
@@ -20,7 +19,6 @@ import RotatingText from './bits/RotatingText';
 import SpotlightCard from './bits/SpotlightCard';
 import Magnet from './bits/Magnet';
 import StarBorder from './bits/StarBorder';
-import DotGrid from './bits/DotGrid';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -31,7 +29,6 @@ const years = new Date().getFullYear() - company.founded;
 const NAV = [
   ['Services', '#services'],
   ['Projects', '#projects'],
-  ['Estimate', '#estimate'],
   ['Process', '#process'],
   ['Reviews', '#reviews']
 ];
@@ -245,7 +242,7 @@ function Hero({ ready }) {
               <div className="hero-actions hero-fade">
                 <StarBorder
                   as="a"
-                  href="#estimate"
+                  href="#quote"
                   onClick={go}
                   color="#ffffff"
                   duration={6}
@@ -255,7 +252,7 @@ function Hero({ ready }) {
                   textColor={theme.navy}
                   className="btn-star"
                 >
-                  Get an instant estimate <Icon name="arrow" size={18} />
+                  Book a free site visit <Icon name="arrow" size={18} />
                 </StarBorder>
                 <a href="#projects" onClick={go} className="btn btn-outline-light">
                   View our projects
@@ -384,8 +381,8 @@ function Services() {
               </div>
               <h3>{s.title}</h3>
               <p>{s.text}</p>
-              <a href="#estimate" onClick={go} className="service-link">
-                Estimate this <Icon name="arrow" size={16} />
+              <a href="#quote" onClick={go} className="service-link">
+                Get a quote <Icon name="arrow" size={16} />
               </a>
             </SpotlightCard>
           ))}
@@ -492,25 +489,6 @@ function Projects() {
   );
 }
 
-/* ───────────────────────── Estimate ───────────────────────── */
-function Estimate({ onQuote }) {
-  return (
-    <section className="section estimate is-dark" id="estimate">
-      <div className="estimate-bg" aria-hidden="true">
-        <DotGrid dotSize={2} gap={30} baseColor="#1d2f47" activeColor={theme.brass} proximity={140} shockRadius={220} glow={0.25} />
-      </div>
-      <div className="container">
-        <SectionHead index="05" label="Instant estimate" title="Know your number in ten seconds.">
-          No email needed. Pick a project, set the size and choose a finish level for a ballpark built from our recent local jobs.
-        </SectionHead>
-        <div className="reveal">
-          <Estimator onQuote={onQuote} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ───────────────────────── Process (drawing builds as you scroll, page never stops) ───────────────────────── */
 function Process() {
   const ref = useRef(null);
@@ -561,7 +539,7 @@ function Process() {
   return (
     <section className="section process" id="process" ref={ref}>
       <div className="container">
-        <SectionHead index="06" label="How it works" title="A process with no surprises.">
+        <SectionHead index="05" label="How it works" title="A process with no surprises.">
           You know the price, the schedule and who is in charge before a single shovel hits dirt.
         </SectionHead>
         <div className="process-grid">
@@ -599,7 +577,7 @@ function Reviews() {
   return (
     <section className="section reviews" id="reviews">
       <div className="container">
-        <SectionHead index="07" label="Client reviews" title="Our best marketing is our clients." />
+        <SectionHead index="06" label="Client reviews" title="Our best marketing is our clients." />
         <div className="reviews-grid">
           {config.testimonials.map(t => (
             <figure className="review reveal" key={t.name}>
@@ -623,18 +601,8 @@ function Reviews() {
 }
 
 /* ───────────────────────── Quote / Contact ───────────────────────── */
-function Quote({ prefill }) {
+function Quote() {
   const [status, setStatus] = useState('idle');
-  const formRef = useRef(null);
-
-  useEffect(() => {
-    if (!prefill || !formRef.current) return;
-    const f = formRef.current;
-    const radio = f.querySelector(`input[name="project"][value="${prefill.project}"]`);
-    if (radio) radio.checked = true;
-    if (f.details) f.details.value = prefill.details;
-    setStatus('idle');
-  }, [prefill]);
 
   const submit = async e => {
     e.preventDefault();
@@ -665,7 +633,7 @@ function Quote({ prefill }) {
       <div className="container quote-grid">
         <div>
           <p className="label reveal">
-            <span>08</span> Book a site visit
+            <span>07</span> Book a site visit
           </p>
           <SplitText text="Let’s talk about your project." tag="h2" className="h2" splitType="words" textAlign="left" delay={50} mask />
           <p className="lead reveal">Tell us what you’re planning. A project lead, usually the owner, calls you back within one business day.</p>
@@ -695,7 +663,7 @@ function Quote({ prefill }) {
           </div>
         </div>
 
-        <form className="quote-form reveal" onSubmit={submit} ref={formRef}>
+        <form className="quote-form reveal" onSubmit={submit}>
           {status === 'sent' ? (
             <div className="form-done">
               <span className="done-icon">
@@ -743,9 +711,9 @@ function Quote({ prefill }) {
                       Select a range
                     </option>
                     <option>Under $25k</option>
-                    <option>$25k – $100k</option>
-                    <option>$100k – $500k</option>
-                    <option>$500k+</option>
+                    <option>$25k – $75k</option>
+                    <option>$75k – $200k</option>
+                    <option>$200k+</option>
                   </select>
                 </label>
                 <label className="field">
@@ -857,13 +825,7 @@ function Footer() {
 /* ───────────────────────── App ───────────────────────── */
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [prefill, setPrefill] = useState(null);
   const root = useRef(null);
-
-  const handleQuote = data => {
-    setPrefill({ ...data, at: Date.now() });
-    scrollToTarget('#quote');
-  };
 
   useEffect(() => {
     const lenis = initSmoothScroll();
@@ -902,10 +864,9 @@ export default function App() {
         <Services />
         <PlanToBuilt />
         <Projects />
-        <Estimate onQuote={handleQuote} />
         <Process />
         <Reviews />
-        <Quote prefill={prefill} />
+        <Quote />
       </main>
       <Footer />
       <div className="call-bar">

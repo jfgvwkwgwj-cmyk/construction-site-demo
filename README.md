@@ -33,13 +33,13 @@ For real lead capture, create a free form at Formspree or Getform and paste the 
 
 ## What's included
 
-- **3D hero**: a tower builds itself floor by floor as you scroll (crane, slabs, glass, lights on), with a live build readout and a "Topped out" stamp
-- **Instant cost estimator**: project type, size slider and finish level give a live price range and build time, then pre-fill the quote form. Rates live in `config.estimator`
+- **3D hero**: a building assembles itself when the page loads (crane, slabs, glass, lights on), with a live project-status readout
+- **Process drawing**: an architectural elevation draws itself stage by stage as visitors scroll through the four steps
 - **Plan → built slider**: drag to compare the blueprint with the finished house
-- Crossed caution-tape banners, surveyor crosshair cursor, scroll elevation gauge
+- Credentials strip, drawing-sheet project cards
 - Preloader, smooth scroll, sticky nav that hides on scroll
 - Animated headline with rotating services
-- Scroll-velocity marquee, scroll-reveal story text, count-up stats
+- Scroll-reveal story text, count-up stats
 - Spotlight service cards, pinned horizontal project gallery, scrubbed process timeline
 - Reviews, service area, quote form with project-type chips
 - Mobile "Call now / Free estimate" bar (most contractor leads come from phones)
@@ -52,7 +52,7 @@ For real lead capture, create a free form at Formspree or Getform and paste the 
 - `src/App.jsx` — page sections
 - `src/styles.css` — design
 - `src/components/BuildScene.jsx` — the 3D building (Three.js)
-- `src/components/Estimator.jsx` — price calculator
+- `src/components/ProcessDrawing.jsx` — the drawing in the process section
 - `src/components/Compare.jsx` — plan vs built slider
 - `src/components/Blueprint.jsx` — animated line drawings
 - `src/bits/` — React Bits components
